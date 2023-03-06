@@ -55,12 +55,12 @@ body {
   display: flex;
 }
 
-#map {
+/* #map {
   height: 450px;
   width: 100vw;
   margin: auto;
-}
-.mt-50{
+} */
+/* .mt-50{
   margin-top: 50px
 }
 .ml-50{
@@ -68,34 +68,6 @@ body {
 }
 .h-12 {
   height: 1.5rem;
-}
-/* #flight-list {
-  font-family: Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-#flight-list td,
-#flight-list th {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-#flight-list tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-#flight-list tr:hover {
-  background-color: #ddd;
-  cursor: pointer;
-}
-
-#flight-list th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #04aa6d;
-  color: white;
 } */
 
 .logo {
