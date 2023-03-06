@@ -1,95 +1,59 @@
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
-
 import '../dist/output.css';
-import { flightApiCall$ } from "./api/api";
-
+import { flightData } from "./api/api";
+import { Flight } from "./interfaces/flights";
 
 let listContainer = document.querySelector("#flight-list");
 
-function flightHandler(coordinates: { lat: any; long: any; }) {
-    console.log(coordinates);
-    marker.setLatLng([coordinates.long, coordinates.lat]);
-    //setFlightLocation(coordinates.lat, coordinates.long);
-    map1.flyTo([coordinates.long, coordinates.lat], 11);
-}
-// let flights = [];
+const loader = document.getElementById("loader");
+// Show the loader
+loader!.style.display = "flex";
 
-// flights = flightApiCall$;
-// localStorage.setItem('flightData', JSON.stringify(flights));
-// let test = localStorage.getItem('flightData');
-// console.log(test);
-// console.log('These are the flights:', flights);
+let flights: Flight[] = [];
 
-const flights = await flightApiCall$();
-localStorage.setItem('flightData', JSON.stringify(flights));
-console.log(flights);
+flightData().subscribe((data) => {
+    flights = data;
+    loader!.style.display = "none";
+    renderFlightTable(flights);
+});
 
-if (localStorage !== null)
-    for (let i = 0; i < 20; i++) {
+
+function renderFlightTable(flights: Flight[]) {
+    for (let i = 0; i < flights.length; i++) {
         let coordinates = {
             lat: 0,
             long: 0,
         };
-        console.log('In ho')
         const flightTable = document.createElement("tr");
-        const flightTableData = document.createElement("td");
-        flightTableData.innerText = flights[i][1];
-        const flightTableData2 = document.createElement("td");
-        flightTableData2.innerText = flights[i][2];
-        const flightTableData3 = document.createElement("td");
-        flightTableData3.innerText = flights[i][9];
+        const flightTablerow = document.createElement("td");
+        flightTablerow.innerText = flights[i].callsign;
+        const countryName = document.createElement("td");
+        countryName.innerText = flights[i].origin_country;
+        const flightSpeed = document.createElement("td");
+        flightSpeed.innerText = flights[i].velocity?.toString();
 
-        flightTable.appendChild(flightTableData);
-        flightTable.appendChild(flightTableData2);
-        flightTable.appendChild(flightTableData3);
-        flightTable.className = "flex-item";
+        flightTable.appendChild(flightTablerow);
+        flightTable.appendChild(countryName);
+        flightTable.appendChild(flightSpeed);
+        flightTable.className = "h-12 hover:bg-primary-500";
+        flightTablerow.className = "h-12 px-4";
+        countryName.className = "h-12 px-4";
+        flightSpeed.className = "h-12 px-4";
 
         listContainer?.appendChild(flightTable);
-        coordinates.lat = flights[i][5];
-        coordinates.long = flights[i][6];
+        coordinates.lat = flights[i].latitude;
+        coordinates.long = flights[i].longitude;
         flightTable.addEventListener("click", () => flightHandler(coordinates));
     }
-else {
-    console.log('No previous history')
 }
-// const flights=[];
-// flightApiCall$.subscribe((flightResults) => {
-//     const flights = flightResults;
-//     // localStorage.setItem('flightData', JSON.stringify(flights));
-//     // let test = localStorage.getItem('flightData');
-//     // console.log(test);
-//     localStorage.setItem('Test', 'This is a test.')
-//     debugger;
-//     (flights);
 
-// });
-
-
-
-for (let i = 0; i < 20; i++) {
-    let coordinates = {
-        lat: 0,
-        long: 0,
-    };
-    const flightTable = document.createElement("tr");
-    const flightTableData = document.createElement("td");
-    flightTableData.innerText = flights[i][1];
-    const flightTableData2 = document.createElement("td");
-    flightTableData2.innerText = flights[i][2];
-    const flightTableData3 = document.createElement("td");
-    flightTableData3.innerText = flights[i][9];
-
-    flightTable.appendChild(flightTableData);
-    flightTable.appendChild(flightTableData2);
-    flightTable.appendChild(flightTableData3);
-    flightTable.className = "flex-item";
-
-    listContainer?.appendChild(flightTable);
-    coordinates.lat = flights[i][5];
-    coordinates.long = flights[i][6];
-    flightTable.addEventListener("click", () => flightHandler(coordinates));
+function flightHandler(coordinates: { lat: number; long: number; }) {
+    console.log(coordinates);
+    marker.setLatLng([coordinates.long, coordinates.lat]);
+    map1.flyTo([coordinates.long, coordinates.lat], 11);
 }
+
 let greenIcon = L.icon({
     iconUrl: "./src/assets/black-plane.png",
     iconSize: [25, 25],
